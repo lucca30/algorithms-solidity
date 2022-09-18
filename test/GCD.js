@@ -21,7 +21,7 @@ const cenarios = [
   { a: "35", b: "15" },
   { a: "19263068", b: "263068" },
 
-  // worst scenarios (consecutive fibonacci numbers)
+  // worst scenarios (consecutive fibonacci numbers) and gcd is always 1
   { a: "354224848179261915075", b: "218922995834555169026" },
   { a: "280571172992510140037611932413038677189525", b: "173402521172797813159685037284371942044301" },
   { a: "7896325826131730509282738943634332893686268675876375", b: "4880197746793002076754294951020699004973287771475874" },
@@ -53,15 +53,24 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
     })
     it('Validate Extended Euclidian Algorithm', async () => {
       for (let i = 0; i < cenarios.length; i += 1) {
-        console.log(`Cenário ${i}`);
-        const localCall = egcd(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
-        console.log(localCall);
+        // console.log(`Cenário ${i}`);
+        const a = web3.utils.toBN(cenarios[i].a);
+        const b = web3.utils.toBN(cenarios[i].b);
+
+        const localCall = a.egcd(b);
+        // console.log(localCall);
         
         const maxInt = web3.utils.toBN("2").pow(web3.utils.toBN("255"));
-        console.log(maxInt.lt(web3.utils.toBN(cenarios[i].a)*web3.utils.toBN(localCall.x)));
-        console.log(maxInt.lt(web3.utils.toBN(cenarios[i].b)*web3.utils.toBN(localCall.y)));
+        // console.log("Verificando se produto estoura o max number");
+        // console.log(maxInt.lt(a.mul(localCall.a)));
+        // console.log(maxInt.lt(b.mul(localCall.b)));
+
+        const gcdDividesBothValues = (a.mod(localCall.gcd)).eq(web3.utils.toBN("0")) && b.mod(localCall.gcd).eq(web3.utils.toBN("0")) 
+        const theresTwoIntegersResultsGcdInBinomium = localCall.gcd.eq(a.mul(localCall.a) + b.mul(localCall.b))
+        // console.log("Verificando offchain se o resultado ta correto: ", gcdDividesBothValues && theresTwoIntegersResultsGcdInBinomium);
         
-        const message = await gcd.verifyGcd(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b), web3.utils.toBN(localCall.gcd), web3.utils.toBN(localCall.x), web3.utils.toBN(localCall.y));
+
+        const message = await gcd.verifyGcd(a, b, localCall.gcd, localCall.a, localCall.b);
         console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}`, message.receipt.gasUsed);
 
       }
