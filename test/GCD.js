@@ -1254,9 +1254,10 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
     // check if the message is stored on deployment as expected
     it('Euclidian Algorithm', async () => {
       for (let i = 0; i < cenarios.length; i += 1) {
-        const message = await gcd.euclidianAlgorithm(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
-        console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}`, message.receipt.gasUsed);
-        cenarios[i].gasWhenCalculateOnChain = message.receipt.gasUsed;
+        const message = await gcd.Soluciona.call(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
+        
+        console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}`, +message[1].toString());
+        cenarios[i].gasWhenCalculateOnChain = +message[1].toString();
       }
     })
     it('Validate Extended Euclidian Algorithm', async () => {
@@ -1273,14 +1274,14 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
         // console.log(maxInt.lt(a.mul(localCall.a)));
         // console.log(maxInt.lt(b.mul(localCall.b)));
 
-        const gcdDividesBothValues = (a.mod(localCall.gcd)).eq(web3.utils.toBN("0")) && b.mod(localCall.gcd).eq(web3.utils.toBN("0"))
-        const theresTwoIntegersResultsGcdInBinomium = localCall.gcd.eq(a.mul(localCall.a) + b.mul(localCall.b))
+        // const gcdDividesBothValues = (a.mod(localCall.gcd)).eq(web3.utils.toBN("0")) && b.mod(localCall.gcd).eq(web3.utils.toBN("0"))
+        // const theresTwoIntegersResultsGcdInBinomium = localCall.gcd.eq(a.mul(localCall.a) + b.mul(localCall.b))
         // console.log("Verificando offchain se o resultado ta correto: ", gcdDividesBothValues && theresTwoIntegersResultsGcdInBinomium);
 
 
-        const message = await gcd.verifyGcd(a, b, localCall.gcd, localCall.a, localCall.b);
-        console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}`, message.receipt.gasUsed);
-        cenarios[i].gasWhenValidateOnChain = message.receipt.gasUsed;
+        const message = await gcd.Verifica.call(a, b, localCall.gcd, localCall.a, localCall.b);
+        console.log(`Gás usado na verificação para o cenário ${i}`, +message[1].toString());
+        cenarios[i].gasWhenValidateOnChain = +message[1].toString();
 
       }
       console.log(cenarios.map(x => x.gasWhenCalculateOnChain / x.gasWhenValidateOnChain));

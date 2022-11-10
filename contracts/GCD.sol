@@ -1,7 +1,16 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract GCD {
-    function euclidianAlgorithm(int256 a, int256 b) public returns (int256) {
+    // Algoritmo Euclidiano
+    function Soluciona(int256 a, int256 b) public returns (int256, uint256) {
+        int256 resultado;
+        uint256 gasInicial = gasleft();
+        resultado = algoritmoEuclidiano(a, b);
+        uint256 gasUsado = gasInicial - gasleft();
+        return (resultado, gasUsado);
+    }
+
+    function algoritmoEuclidiano(int256 a, int256 b) pure public returns ( int256) {
         require(a >= b && b >= 0 && a > 0);
         int256 _a = a;
         int256 _b = b;
@@ -14,7 +23,18 @@ contract GCD {
         return _a;
     }
 
-    function verifyGcd(int256 a, int256 b, int256 gcd, int256 x, int256 y) public returns (int256) {
+
+
+    // Algoritmo verificador
+    function Verifica(int256 a, int256 b, int256 gcd, int256 x, int256 y) public returns (int256,uint256) {
+        int256 resultado;
+        uint256 gasInicial = gasleft();
+        resultado = verificaGCD(a, b, gcd, x, y);
+        uint256 gasUsado = gasInicial - gasleft();
+        return (resultado, gasUsado);
+    }
+
+    function verificaGCD(int256 a, int256 b, int256 gcd, int256 x, int256 y) public pure returns (int256) {
         require(a >= b && b >= 0 && a > 0, "Input not valid");
         
         // check correctnes
@@ -22,4 +42,6 @@ contract GCD {
 
         return gcd;
     }
+
+
 }
