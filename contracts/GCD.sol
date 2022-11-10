@@ -2,12 +2,13 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract GCD {
     // Algoritmo Euclidiano
-    function Soluciona(int256 a, int256 b) public returns (int256, uint256) {
+    function Soluciona(int256 a, int256 b) public returns (int256, uint256, uint256) {
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
         int256 resultado;
-        uint256 gasInicial = gasleft();
+        uint256 gasAntesDaFuncao = gasleft();
         resultado = algoritmoEuclidiano(a, b);
-        uint256 gasUsado = gasInicial - gasleft();
-        return (resultado, gasUsado);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (resultado, gasUsado, consumoInicial);
     }
 
     function algoritmoEuclidiano(int256 a, int256 b) pure public returns ( int256) {
@@ -23,15 +24,16 @@ contract GCD {
         return _a;
     }
 
-
+    // vamos tentar incluir o certificado no preco
 
     // Algoritmo verificador
-    function Verifica(int256 a, int256 b, int256 gcd, int256 x, int256 y) public returns (int256,uint256) {
+    function Verifica(int256 a, int256 b, int256 gcd, int256 x, int256 y) public returns (int256,uint256,uint256) {
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
         int256 resultado;
-        uint256 gasInicial = gasleft();
+        uint256 gasAntesDaFuncao = gasleft();
         resultado = verificaGCD(a, b, gcd, x, y);
-        uint256 gasUsado = gasInicial - gasleft();
-        return (resultado, gasUsado);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (resultado, gasUsado, consumoInicial);
     }
 
     function verificaGCD(int256 a, int256 b, int256 gcd, int256 x, int256 y) public pure returns (int256) {

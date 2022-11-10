@@ -1255,9 +1255,11 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
     it('Euclidian Algorithm', async () => {
       for (let i = 0; i < cenarios.length; i += 1) {
         const message = await gcd.Soluciona.call(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
+        const message_ = await gcd.Soluciona(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
         
-        console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}`, +message[1].toString());
-        cenarios[i].gasWhenCalculateOnChain = +message[1].toString();
+        console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}:\n Inicial: ${+message[2].toString()}\nExecução: ${+message[1].toString()}\nTotal:${+message[1].toString() + +message[2].toString()}`);
+        console.log(message_.receipt.gasUsed-21000);
+        cenarios[i].gasWhenCalculateOnChain = +message[1].toString() + +message[2].toString();
       }
     })
     it('Validate Extended Euclidian Algorithm', async () => {
@@ -1280,8 +1282,9 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
 
 
         const message = await gcd.Verifica.call(a, b, localCall.gcd, localCall.a, localCall.b);
-        console.log(`Gás usado na verificação para o cenário ${i}`, +message[1].toString());
-        cenarios[i].gasWhenValidateOnChain = +message[1].toString();
+        console.log(`Gás usado na verificação para o cenário ${i}:\n Inicial: ${+message[2].toString()}\n Execução: ${+message[1].toString()}\n Total:${+message[1].toString() + +message[2].toString()}`);
+
+        cenarios[i].gasWhenValidateOnChain = +message[1].toString() + +message[2].toString();
 
       }
       console.log(cenarios.map(x => x.gasWhenCalculateOnChain / x.gasWhenValidateOnChain));
