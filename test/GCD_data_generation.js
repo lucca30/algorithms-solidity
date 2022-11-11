@@ -6,7 +6,7 @@ var randomnumber = (maximum, minimum) => Math.floor(Math.random() * (maximum - m
 var randomBN = () => {
   const value = web3.utils.randomHex(30)
   const bn = web3.utils.toBN(value.toString('hex'), 16);
-  return new BN(bn.toString().substring(0, randomnumber(1, 30))); // gera um número aleatório uniformemente distribuido em relacao ao numero de caracteres
+  return new BN(bn.toString().substring(0, randomnumber(30, 1))); // gera um número aleatório uniformemente distribuido em relacao ao numero de caracteres
 }
 
 const resp = [];

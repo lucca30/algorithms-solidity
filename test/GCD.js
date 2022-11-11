@@ -46,6 +46,8 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
 
         console.log(`Gás usado no algoritmo euclidiano para o cenário ${i}:\n Inicial: ${+message[2].toString()}\nExecução: ${+message[1].toString()}\nTotal:${+message[1].toString() + +message[2].toString()}`);
         cenarios[i].gasWhenCalculateOnChain = +message[1].toString() + +message[2].toString();
+        cenarios[i].initialGasCalculate = +message[2].toString()
+        cenarios[i].executionGasCalculate = +message[1].toString()
       }
 
       // Validate on chain
@@ -71,6 +73,8 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
         console.log(`Gás usado na verificação para o cenário ${i}:\n Inicial: ${+message[2].toString()}\n Execução: ${+message[1].toString()}\n Total:${+message[1].toString() + +message[2].toString()}`);
 
         cenarios[i].gasWhenValidateOnChain = +message[1].toString() + +message[2].toString();
+        cenarios[i].initialGasValidate = +message[2].toString()
+        cenarios[i].executionGasValidate = +message[1].toString()
 
       }
 
