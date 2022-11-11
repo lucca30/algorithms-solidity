@@ -2,3 +2,5 @@ truffle-config.js
 node_modules
 Artigos
 localtests.js
+*_data.json
+*_results.json
