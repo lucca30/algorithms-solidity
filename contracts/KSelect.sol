@@ -2,11 +2,9 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract KSelect {
   uint256[] public values;
-  event Debug(uint256 x);
 
 
     function Soluciona(uint256 k) public returns (uint256[] memory, uint256, uint256) {
-        emit Debug(0);
         uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
         uint256[] memory resultado;
         uint256 gasAntesDaFuncao = gasleft();
@@ -17,9 +15,12 @@ contract KSelect {
 
     function quickSelect(uint256 k) public returns (uint256[] memory) {
       uint256 left = 0;
-      uint256 right = values.length;
+      uint256 right = values.length - 1;
       uint256[] memory list = new uint256[](values.length);
       uint256 pivotIndex;
+      for(uint i = 0;i<values.length;i++){
+        list[i] = values[i];
+      }
       while(true){
           if (left == right){
             uint256[] memory response = new uint256[](values.length);
