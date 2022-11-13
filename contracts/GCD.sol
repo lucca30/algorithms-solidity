@@ -11,7 +11,7 @@ contract GCD {
         return (resultado, gasUsado, consumoInicial);
     }
 
-    function algoritmoEuclidiano(int256 a, int256 b) pure public returns ( int256) {
+    function algoritmoEuclidiano(int256 a, int256 b) pure private returns ( int256) {
         require(a >= b && b >= 0 && a > 0);
         int256 _a = a;
         int256 _b = b;
@@ -36,7 +36,7 @@ contract GCD {
         return (resultado, gasUsado, consumoInicial);
     }
 
-    function verificaGCD(int256 a, int256 b, int256 gcd, int256 x, int256 y) public pure returns (int256) {
+    function verificaGCD(int256 a, int256 b, int256 gcd, int256 x, int256 y) private pure returns (int256) {
         require(a >= b && b >= 0 && a > 0, "Input not valid");
         
         // check correctnes
