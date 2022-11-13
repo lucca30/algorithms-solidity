@@ -25,13 +25,14 @@ require("chai")
   .should()
 
 contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
-  let gcd
+  let gcd;
+  return; // temporary skip this test
 
   // this would attach the deployed smart contract and its methods 
   // to the `gcd` variable before all other tests are run
   before(async () => {
     gcd = await GCD.deployed()
-    let rawdata = fs.readFileSync('test/GCD_data.json');
+    let rawdata = fs.readFileSync('test/GCD/GCD_data.json');
     cenarios = JSON.parse(rawdata);
   })
 
@@ -39,7 +40,6 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
   describe('Teste GCD', () => {
     // check if the message is stored on deployment as expected
     it('GCD', async () => {
-      
       // Calculate on chain
       for (let i = 0; i < cenarios.length; i += 1) {
         const message = await gcd.Soluciona.call(web3.utils.toBN(cenarios[i].a), web3.utils.toBN(cenarios[i].b));
@@ -83,13 +83,13 @@ contract('GCD', ([contractOwner, secondAddress, thirdAddress]) => {
       cenarios.forEach(x => { x.RatioCalculateVsValidate = x.gasWhenCalculateOnChain / x.gasWhenValidateOnChain });
 
       // Save results
-      fs.writeFile('test/GCD_results.json', JSON.stringify(cenarios, null, 4), err => {
+      fs.writeFile('test/GCD/GCD_results.json', JSON.stringify(cenarios, null, 4), err => {
         if (err) {
           console.error(err);
         }
         // file written successfully
       });
-    })
+    }).timeout(3000000)
   })
 
 })

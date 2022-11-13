@@ -11,14 +11,14 @@ var randomBN = () => {
 
 const resp = [];
 const x = [];
-for(let i = 0;i<1000 ;i+=1){
+for(let i = 0;i<3000 ;i+=1){
   const a = randomBN();
   const b = randomBN();
   if(a.gt(b))resp.push({a:a.toString(),b:b.toString()});
   else resp.push({a:b.toString(),b:a.toString()});
 }
 
-fs.writeFile('test/GCD_data.json', JSON.stringify(resp, null, 4), err => {
+fs.writeFile('test/GCD/GCD_data.json', JSON.stringify(resp, null, 4), err => {
   if (err) {
     console.error(err);
   }
