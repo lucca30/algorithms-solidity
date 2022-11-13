@@ -10,6 +10,7 @@ require("chai")
   .should()
 
 const localValues = [];
+const cenarios = [];
 
 contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
   let kSelect;
@@ -22,7 +23,8 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
     it('KSelect', async () => {
       // Calculate on chain
       let totalItens = 0;
-      for (let i = 1; i < 8; i++) {
+      for (let i = 1; i <= 10; i++) {
+        
         let newPow = Math.pow(2,i);
         let elementsToInsert = newPow - totalItens;
         let arrayToInsert = [];
@@ -41,7 +43,7 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
 
         for (j = 0; j < i; j++) {
           const k = Math.pow(2,j);
-          console.log(`Cenário:\n N=${totalItens}\n K=${k}`);
+          console.log(`Cenário N=${totalItens} K=${k}`);
           const messageSoluciona = await kSelect.Soluciona.call(k);
           const responseSoluciona = messageSoluciona[0].map(x => +x.toString());
           
@@ -52,18 +54,44 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
           const messageVerifica = await kSelect.Verifica.call(k, responseCertificador.sort((a, b) => a-b));
           const responseVerifica = messageVerifica[0].map(x => +x.toString());
 
-          console.log(
-            responseSoluciona.sort((a, b) => a-b).join() ===  responseCertificador.sort((a, b) => a-b).join()
-            &&
-            responseSoluciona.sort((a, b) => a-b).join() === responseVerifica.sort((a, b) => a-b).join()
-            &&
-            responseSoluciona.sort((a, b) => a-b).join() === [...valuesOnBlockchain].sort((a, b) => a-b).slice(0, k).join()
-            );
+          if(
+              !(
+                responseSoluciona.sort((a, b) => a-b).join() ===  responseCertificador.sort((a, b) => a-b).join()
+                &&
+                responseSoluciona.sort((a, b) => a-b).join() === responseVerifica.sort((a, b) => a-b).join()
+                &&
+                responseSoluciona.sort((a, b) => a-b).join() === [...valuesOnBlockchain].sort((a, b) => a-b).slice(0, k).join()
+              )
+            ) throw `Resultado Inválido:`;
+          
 
+          cenarios.push(
+            {
+              N: totalItens,
+              K: k,
+              
+              SolucionaGasInicial:+messageSoluciona[2].toString(),
+              SolucionaGasExecucao:+messageSoluciona[1].toString(),
+              SolucionaGasTotal:+messageSoluciona[1].toString() + +messageSoluciona[2].toString(),
+              
+              VerificaGasInicial:+messageVerifica[2].toString(),
+              VerificaGasExecucao:+messageVerifica[1].toString(),
+              VerificaGasTotal:+messageVerifica[1].toString() + +messageVerifica[2].toString(),
+
+              RazaoSolucionaVerifica:(+messageSoluciona[1].toString() + +messageSoluciona[2].toString())/(+messageVerifica[1].toString() + +messageVerifica[2].toString())
+            }
+          );
         }
       }
 
-    }).timeout(300000000)
+      fs.writeFile('test/KSelect/KSelect_results.json', JSON.stringify(cenarios, null, 4), err => {
+        if (err) {
+          console.error(err);
+        }
+        // file written successfully
+      });
+
+    }).timeout(30000000000)
   })
 
 })
