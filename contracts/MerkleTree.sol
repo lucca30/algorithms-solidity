@@ -12,12 +12,30 @@ contract MerkleTree {
         owner = msg.sender;
     }
 
-    function DefineNovaRoot(bytes32 newRoot) public {
+
+    function InsereParaVerifica(bytes32 newRoot) public returns (uint256, uint256){
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
+        uint256 gasAntesDaFuncao = gasleft();
+        defineNovaRoot(newRoot);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (gasUsado, consumoInicial);
+    }
+
+    function defineNovaRoot(bytes32 newRoot) private {
         require(msg.sender == owner);
         claimMerkleRoot = newRoot;
     }
 
-    function InsereWhitelist(address[] calldata addresses) public {
+    function InsereParaSoluciona(address[] calldata addresses) public returns (uint256, uint256){
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
+        uint256 gasAntesDaFuncao = gasleft();
+        insereWhitelist(addresses);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (gasUsado, consumoInicial);
+    }
+
+    function insereWhitelist(address[] calldata addresses) private {
+        require(msg.sender == owner);
         for(uint i=0;i<addresses.length;i++){
             whiteslist[addresses[i]] = 1;
         }

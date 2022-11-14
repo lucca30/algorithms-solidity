@@ -24,32 +24,96 @@ contract('MerkleTree', ([contractOwner, secondAddress, thirdAddress]) => {
   
   describe('Teste MerkleTree', () => {
     it('MerkleTree', async () => {
-      
-      // Creating Tree
-      const values = [
-        "0x1111111111111111111111111111111111111111",
-        "0x2222222222222222222222222222222222222222",
-        "0x2222222222222222222222222222222222222223",
-        "0x2222222222222222222222222222222222222224",
-        "0x2222222222222222222222222222222222222225",
-        "0x2222222222222222222222222222222222222226",
-      ];
-      const tree = new MerkleTree(values, keccak256, { hashLeaves: true, sortPairs: true }); 
+      let cenarios = [];
+      for(let i=0;i<=10;i++){
+        console.log('Cenário ' + i);
+        // InsereParaSoluciona
+        let elements = [];
+        let totalElements = Math.pow(2,i);
+        for(let j=0;j<totalElements;j++){
+          elements.push(web3.utils.randomHex(20));
+        }
+        let messageInsereParaSoluciona = await merkleTree.InsereParaSoluciona(elements);
 
-      console.log('Merkle Root:', tree.getHexRoot()); // this is what we save on blockchain
-      
-      console.log('Define nova root start');
-      console.log(await merkleTree.DefineNovaRoot(tree.getHexRoot()));
-      console.log('Define nova root end');
+        // InsereParaVerifica
+        const tree = new MerkleTree(elements, keccak256, { hashLeaves: true, sortPairs: true }); 
+        let messageInsereParaVerifica = await merkleTree.InsereParaVerifica(tree.getHexRoot());
+        
+        for(let j=0;j<totalElements;j++){
+          console.log(j);
+          const leaf = keccak256(elements[j]);
+          const proof = tree.getHexProof(leaf);
+          let messageVerifica = await merkleTree.Verifica.call(elements[j], proof);
+          let messageSoluciona = await merkleTree.Soluciona.call(elements[j]);
+          cenarios.push(
+            {
+              N: totalElements,
+              
+              SolucionaGasInicial:+messageSoluciona[2].toString(),
+              SolucionaGasExecucao:+messageSoluciona[1].toString(),
+              SolucionaGasTotal:+messageSoluciona[1].toString() + +messageSoluciona[2].toString(),
+              
+              VerificaGasInicial:+messageVerifica[2].toString(),
+              VerificaGasExecucao:+messageVerifica[1].toString(),
+              VerificaGasTotal:+messageVerifica[1].toString() + +messageVerifica[2].toString(),
 
-      const leaf = keccak256(values[0]);
+              RazaoSolucionaVerifica:(+messageSoluciona[1].toString() + +messageSoluciona[2].toString())/(+messageVerifica[1].toString() + +messageVerifica[2].toString())
+            }
+          );
 
-      const proof = tree.getHexProof(leaf);
+        }
+        fs.writeFile('test/MerkleTree/MerkleTree_results.json', JSON.stringify(cenarios, null, 4), err => {
+          if (err) {
+            console.error(err);
+          }
+          // file written successfully
+        });
 
-      await merkleTree.Verifica(values[0], proof);
-      
+      }
 
-    }).timeout(3000000)
+    }).timeout(3000000);
+
+    it('Insert Comparison', async () => {
+      return;
+      let cenarios = [];
+      for(let i=0;i<=10;i++){
+        console.log(i);
+        // InsereParaSoluciona
+        let elements = [];
+        let totalElements = Math.pow(2,i);
+        for(let j=0;j<totalElements;j++){
+          elements.push(web3.utils.randomHex(20));
+        }
+        let messageInsereParaSoluciona = await merkleTree.InsereParaSoluciona.call(elements);
+
+        // InsereParaVerifica
+        const tree = new MerkleTree(elements, keccak256, { hashLeaves: true, sortPairs: true }); 
+        let messageInsereParaVerifica = await merkleTree.InsereParaVerifica.call(tree.getHexRoot());
+
+        cenarios.push(
+          {
+            N: totalElements,
+            
+            InsereParaSolucionaGasInicial:+messageInsereParaSoluciona[1].toString(),
+            InsereParaSolucionaGasExecucao:+messageInsereParaSoluciona[0].toString(),
+            InsereParaSolucionaGasTotal:+messageInsereParaSoluciona[0].toString() + +messageInsereParaSoluciona[1].toString(),
+
+            InsereParaVerificaGasInicial:+messageInsereParaVerifica[1].toString(),
+            InsereParaVerificaGasExecucao:+messageInsereParaVerifica[0].toString(),
+            InsereParaVerificaGasTotal:+messageInsereParaVerifica[0].toString() + +messageInsereParaVerifica[1].toString(),
+
+            RazaoSolucionaVerifica:(+messageInsereParaSoluciona[0].toString() + +messageInsereParaSoluciona[1].toString())/(+messageInsereParaVerifica[0].toString() + +messageInsereParaVerifica[1].toString())
+          }
+        );
+      }
+
+      fs.writeFile('test/MerkleTree/MerkleTree_results_insere.json', JSON.stringify(cenarios, null, 4), err => {
+        if (err) {
+          console.error(err);
+        }
+        // file written successfully
+      });
+    }).timeout(3000000);
   })
 
 })
