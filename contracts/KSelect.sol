@@ -161,3 +161,29 @@ contract KSelect {
     }
 
 }
+
+
+/*
+
+1: Verifica o tamanho da lista de saida -> facil
+
+1_2: Verifica se está ordenado -> facil
+
+2: Verifica se todos os elementos que sao menores do
+que ou igual ao k-esimo na lista de entrada aparecem
+na lista de saida -> O(N log(k)), fazendo busca binaria nos k elementos (precisamos receber ordenado)
+
+// 3: Verifica se:
+(I) o numero de ocorrencias de cada elemento da
+lista de saida menor do que o k-esimo eh igual a
+sua multiplicidade na lista de entrada; 
+    -> requer mapping dos valores inseridos com a multiplicidade. O que aumenta o custo de storage e precisa ser analisado
+    -> como os valores do certificado ja vem ordenados, basta contar sua multiplicidade e conferir
+
+(II) o numero de ocorrencias do k-esimo elemento
+nao excede sua multiplicidade na lista de entrada
+    -> requer mapping dos valores inseridos com a multiplicidade. O que aumenta o custo de storage e precisa ser analisado
+    -> como os valores do certificado ja vem ordenados, basta contar sua multiplicidade e conferir
+
+
+*/
