@@ -13,7 +13,6 @@ const localValues = [];
 const cenarios = [];
 
 contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
-  return; // skip test for a while
   let kSelect;
 
   before(async () => {
@@ -22,6 +21,7 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
 
   describe('Teste KSelect', () => {
     it('KSelect', async () => {
+      return
       // Calculate on chain
       let totalItens = 0;
       for (let i = 1; i <= 10; i++) {
@@ -36,7 +36,7 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
         }
         while (arrayToInsert.length) {
           let splitOfArrayToInsert = arrayToInsert.splice(0, 256); // enviando de 256 em 256
-          await kSelect.Insere(splitOfArrayToInsert);
+          await kSelect.InsereParaVerifica(splitOfArrayToInsert);
         }
         totalItens = newPow;
         const message = await kSelect.Consulta.call();
@@ -92,6 +92,48 @@ contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
         // file written successfully
       });
 
+    }).timeout(30000000000)
+
+    it('Insert Comparison', async () => {
+      let cenarios = [];
+      for(let i=0;i<=10;i++){
+        console.log(i);
+        // InsereParaSoluciona
+        let elements = [];
+        let totalElements = Math.pow(2,i);
+        for(let j=0;j<totalElements;j++){
+          elements.push(web3.utils.randomHex(20));
+        }
+        let messageInsereParaSoluciona = await kSelect.InsereParaSoluciona.call(elements);
+
+        // InsereParaVerifica
+        let messageInsereParaVerifica = await kSelect.InsereParaVerifica.call(elements);
+
+        cenarios.push(
+          {
+            N: totalElements,
+            
+            InsereParaSolucionaGasInicial:+messageInsereParaSoluciona[1].toString(),
+            InsereParaSolucionaGasExecucao:+messageInsereParaSoluciona[0].toString(),
+            InsereParaSolucionaGasTotal:+messageInsereParaSoluciona[0].toString() + +messageInsereParaSoluciona[1].toString(),
+
+            InsereParaVerificaGasInicial:+messageInsereParaVerifica[1].toString(),
+            InsereParaVerificaGasExecucao:+messageInsereParaVerifica[0].toString(),
+            InsereParaVerificaGasTotal:+messageInsereParaVerifica[0].toString() + +messageInsereParaVerifica[1].toString(),
+
+            RazaoSolucionaVerifica:(+messageInsereParaSoluciona[0].toString() + +messageInsereParaSoluciona[1].toString())/(+messageInsereParaVerifica[0].toString() + +messageInsereParaVerifica[1].toString())
+          }
+        );
+        fs.writeFile('test/KSelect/KSelect_results_insere.json', JSON.stringify(cenarios, null, 4), err => {
+          if (err) {
+            console.error(err);
+          }
+          // file written successfully
+        });
+  
+      }
+
+     
     }).timeout(30000000000)
   })
 

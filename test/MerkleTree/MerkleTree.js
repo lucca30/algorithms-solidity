@@ -24,6 +24,7 @@ contract('MerkleTree', ([contractOwner, secondAddress, thirdAddress]) => {
   
   describe('Teste MerkleTree', () => {
     it('MerkleTree', async () => {
+      return;
       let cenarios = [];
       for(let i=0;i<=10;i++){
         console.log('Cenário ' + i);

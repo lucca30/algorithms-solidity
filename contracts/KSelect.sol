@@ -69,19 +69,35 @@ contract KSelect {
     }
 
 
-    function InsereSemContador(uint256[] memory data) public {
+
+    function insereSemContador(uint256[] memory data) public {
       for(uint i=0;i<data.length;i++){
         values.push(data[i]);
       }
     }
 
-    function Insere(uint256[] memory data) public {
+    function insereComContador(uint256[] calldata data) public {
       for(uint i=0;i<data.length;i++){
         values.push(data[i]);
         valuesCount[data[i]]++;
       }
     }
 
+    function InsereParaVerifica(uint256[] calldata data) public returns (uint256, uint256){
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
+        uint256 gasAntesDaFuncao = gasleft();
+        insereComContador(data);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (gasUsado, consumoInicial);
+    }
+
+    function InsereParaSoluciona(uint256[] calldata data) public returns (uint256, uint256){
+        uint256 consumoInicial = block.gaslimit - gasleft() - 21000;
+        uint256 gasAntesDaFuncao = gasleft();
+        insereSemContador(data);
+        uint256 gasUsado = gasAntesDaFuncao - gasleft();
+        return (gasUsado, consumoInicial);
+    }
 
 
     function Consulta() public view returns (uint256[] memory){
