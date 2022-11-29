@@ -14,7 +14,7 @@ const cenarios = [];
 
 contract('KSelect', ([contractOwner, secondAddress, thirdAddress]) => {
   let kSelect;
-
+  return;
   before(async () => {
     kSelect = await KSelect.deployed()
   })

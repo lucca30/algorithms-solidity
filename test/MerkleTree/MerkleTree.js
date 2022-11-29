@@ -16,7 +16,7 @@ require("chai")
 
 contract('MerkleTree', ([contractOwner, secondAddress, thirdAddress]) => {
   let merkleTree;
-
+  return
   before(async () => {
     merkleTree = await MerkleTreeContract.deployed()
   })
